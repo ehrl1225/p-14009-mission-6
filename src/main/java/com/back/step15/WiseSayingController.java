@@ -39,20 +39,14 @@ public class WiseSayingController {
     }
 
     private void show(WiseSayingCommand cmd){
-        if (cmd.getParameterCount() == 0){
-            WiseSayingView wiseSayingList = service.showWiseSayings(1);
-            System.out.print(wiseSayingList);
-            return;
+        int page = 1;
+        if (cmd.hasParameter(WiseSayingCommandParameterToken.Page)){
+            page = cmd.getIntParameter(WiseSayingCommandParameterToken.Page);
         }
         if (cmd.hasParameter(WiseSayingCommandParameterToken.KeyWordType) && cmd.hasParameter(WiseSayingCommandParameterToken.Keyword)){
             String keywordType = cmd.getStringParameter(WiseSayingCommandParameterToken.KeyWordType);
             String keyword = cmd.getStringParameter(WiseSayingCommandParameterToken.Keyword);
-            int page;
-            if (cmd.hasParameter(WiseSayingCommandParameterToken.Page)){
-                page = cmd.getIntParameter(WiseSayingCommandParameterToken.Page);
-            }else{
-                page = 1;
-            }
+
             WiseSayingView wiseSayingList = service.searchWiseSaying(keywordType, keyword, page);
             System.out.println("----------------------");
             System.out.println("검색타입 : " + keywordType);
@@ -61,11 +55,7 @@ public class WiseSayingController {
             System.out.print(wiseSayingList);
             return;
         }
-        if (cmd.hasParameter(WiseSayingCommandParameterToken.Page)){
-            int page = cmd.getIntParameter(WiseSayingCommandParameterToken.Page);
-            System.out.print(service.showWiseSayings(page));
-            return;
-        }
+        System.out.print(service.showWiseSayings(page));
     }
 
     private void delete(WiseSayingCommand wiseSayingCommand){
