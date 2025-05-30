@@ -4,7 +4,7 @@ import com.back.step15.repository.WiseSayingRepository;
 import com.back.step15.repository.WiseSayingView;
 
 public class WiseSayingService {
-    WiseSayingRepository wiseSayingRepository;
+    private final WiseSayingRepository wiseSayingRepository;
 
     WiseSayingService() {
         this.wiseSayingRepository = new WiseSayingRepository();

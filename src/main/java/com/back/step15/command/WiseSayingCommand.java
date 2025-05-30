@@ -1,8 +1,8 @@
 package com.back.step15.command;
 
 public class WiseSayingCommand {
-    private WiseSayingCommandToken main_command_token;
-    private WiseSayingCommandParameterList parameter_list;
+    private final WiseSayingCommandToken main_command_token;
+    private final WiseSayingCommandParameterList parameter_list;
 
     WiseSayingCommand(WiseSayingCommandToken main_command_token, WiseSayingCommandParameterList parameter_list) {
         this.main_command_token = main_command_token;

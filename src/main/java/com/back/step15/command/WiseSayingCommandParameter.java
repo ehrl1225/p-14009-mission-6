@@ -1,8 +1,8 @@
 package com.back.step15.command;
 
 public class WiseSayingCommandParameter {
-    private WiseSayingCommandParameterToken name;
-    private String value;
+    private final WiseSayingCommandParameterToken name;
+    private final String value;
     private Boolean isNumeric;
 
     private void checkValueNumeric(){

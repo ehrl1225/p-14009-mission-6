@@ -5,15 +5,17 @@ import com.back.step15.WiseSaying;
 import java.io.*;
 
 public class FileManager {
-    final static String JSON_FOLDER = "./db/wiseSaying/";
-    final static String FINAL_ID_FILE = "./db/wiseSaying/lastId.txt";
-    final static String JSON_FILE = "./db/wiseSaying/data.json";
+    private final static String JSON_FOLDER = "./db/wiseSaying/";
+    private final static String JSON_FILE = "./db/wiseSaying/data.json";
 
     JsonManager jsonManager;
 
     FileManager() {
         jsonManager = new JsonManager();
     }
+
+
+
 
     /**
      * save one wiseSaying as json file

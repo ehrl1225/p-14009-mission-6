@@ -3,6 +3,7 @@ package com.back.step15;
 public class WiseSayingParser {
     private String input;
     private int index;
+
     public WiseSayingParser(){}
 
     public void setString(String s){

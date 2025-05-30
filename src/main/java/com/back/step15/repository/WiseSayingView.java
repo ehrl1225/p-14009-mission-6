@@ -6,7 +6,7 @@ public class WiseSayingView {
     private final static int PAGE_SIZE = 5;
     private int page_number;
     private int max_page;
-    private WiseSaying[] wise_sayings;
+    private final WiseSaying[] wise_sayings;
     private int size;
 
     private void loadPage(WiseSayingList.WiseSayingIterator iterator) {

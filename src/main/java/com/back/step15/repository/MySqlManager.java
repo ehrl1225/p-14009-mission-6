@@ -4,54 +4,16 @@ import com.back.step15.WiseSaying;
 
 import java.sql.*;
 
-/**
- * 실행시키기 전 db_user, db_pass 변수를 변경해야함
- */
 public class MySqlManager {
     private final String CREATE_DB = "create table WiseSaying( id  integer not null AUTO_INCREMENT, content varchar(100), author  varchar(50), primary key (id));";
     private final String RESET_ID = "alter table WiseSaying AUTO_INCREMENT = 0;";
     private final String CLEAR_DB = "delete from WiseSaying;";
     private final String driver = "com.mysql.cj.jdbc.Driver";
     private final String url = "jdbc:mysql://localhost:3306/WiseSaying";
-    private final String db_user = "Your Account";
-    private final String db_pass = "Your Password";
+    private final String db_user = "root";
+    private final String db_pass = "root";
     private final int PAGE_SIZE = 5;
-    Connection conn;
-
-
-    private String getInsertSql(String content, String author) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("insert into WiseSaying(content, author) values(\'");
-        sql.append(content);
-        sql.append("\', \'");
-        sql.append(author);
-        sql.append("\');");
-        return sql.toString();
-    }
-
-    private String getSelectAllSql() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select * from WiseSaying order by id desc;");
-        return sql.toString();
-    }
-
-    private String getSelectByContentSql( String content) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select * from WiseSaying ");
-        sql.append("where content like \'%");
-        sql.append(content);
-        sql.append("%\' order by id desc;");
-        return sql.toString();
-    }
-
-    private String getSelectByAuthorSql(String author) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select * from WiseSaying ");
-        sql.append("where author like '%");
-        sql.append(author);
-        sql.append("%' order by id desc;");
-        return sql.toString();
-    }
+    private Connection conn;
 
     private String getSelectByIdSql(int id) {
         StringBuilder sql = new StringBuilder();
@@ -89,7 +51,7 @@ public class MySqlManager {
             conn = DriverManager.getConnection(url, db_user, db_pass);
 
         } catch(SQLException | ClassNotFoundException e){
-            System.out.println("Db Connection failed");
+//            System.out.println("Db Connection failed");
         }
     }
 
@@ -98,7 +60,7 @@ public class MySqlManager {
             conn.close();
 
         }catch(SQLException e){
-            System.out.println("Db Connection failed");
+//            System.out.println("Db Connection failed");
         }
     }
 
@@ -110,7 +72,7 @@ public class MySqlManager {
             stmt.close();
 
         }catch(SQLException e){
-            System.out.println("sql failed");
+//            System.out.println("sql failed");
         }
     }
 
@@ -119,7 +81,9 @@ public class MySqlManager {
         int id = 0;
         try{
 
-            stmt = conn.prepareStatement(getInsertSql(content, author), Statement.RETURN_GENERATED_KEYS);
+            stmt = conn.prepareStatement("insert into WiseSaying(content, author) values(?, ?)", Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, content);
+            stmt.setString(2, author);
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if(rs.next()){
@@ -127,7 +91,7 @@ public class MySqlManager {
             }
             stmt.close();
         }catch (SQLException e){
-            System.out.println("sql failed" + e.getMessage());
+//            System.out.println("sql failed" + e.getMessage());
         }
         return id;
     }
@@ -152,7 +116,7 @@ public class MySqlManager {
         view.setPage(page);
         try{
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(getSelectAllSql());
+            ResultSet rs = stmt.executeQuery("select * from WiseSaying order by id desc;");
             makeResult2View(rs, view, page);
             rs.close();
             stmt.close();
@@ -168,7 +132,7 @@ public class MySqlManager {
         WiseSayingList list = new WiseSayingList();
         try{
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(getSelectAllSql());
+            ResultSet rs = stmt.executeQuery("select * from WiseSaying order by id desc;");
             while(rs.next()){
                 WiseSaying ws = new WiseSaying(rs.getString(2), rs.getString(3));
                 ws.setID(rs.getInt(1));
@@ -182,11 +146,12 @@ public class MySqlManager {
     }
 
     public WiseSaying selectWiseSayingByID(int id){
-        Statement stmt;
+        PreparedStatement stmt;
         WiseSaying ws = null;
         try{
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(getSelectByIdSql(id));
+            stmt = conn.prepareStatement("select * from WiseSaying where id = ?;");
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()){
                  ws = new WiseSaying(rs.getString(2), rs.getString(3));
                 ws.setID(rs.getInt(1));
@@ -201,12 +166,13 @@ public class MySqlManager {
 
     public WiseSayingView selectWiseSayingByContent(int page, String content){
         WiseSayingView view = WiseSayingView.getEmptyView();
-        Statement stmt;
+        PreparedStatement stmt;
         view.setPage(page);
 
         try{
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(getSelectByContentSql(content));
+            stmt = conn.prepareStatement("select * from WiseSaying where content like ? order by id desc;");
+            stmt.setString(1,  "%"+content+ "%");
+            ResultSet rs = stmt.executeQuery();
             makeResult2View(rs, view, page);
             rs.close();
             stmt.close();
@@ -218,11 +184,12 @@ public class MySqlManager {
 
     public WiseSayingView selectWiseSayingByAuthor(int page, String author){
         WiseSayingView view = WiseSayingView.getEmptyView();
-        Statement stmt;
+        PreparedStatement stmt;
         view.setPage(page);
         try{
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(getSelectByAuthorSql(author));
+            stmt = conn.prepareStatement("select * from WiseSaying where author like ? order by id desc;");
+            stmt.setString(1,  "%"+author+ "%");
+            ResultSet rs = stmt.executeQuery();
             makeResult2View(rs, view, page);
             rs.close();
             stmt.close();
@@ -233,9 +200,10 @@ public class MySqlManager {
     }
 
     public void deleteWiseSaying(int id){
-        Statement stmt;
+        PreparedStatement stmt;
         try{
-            stmt = conn.createStatement();
+            stmt = conn.prepareStatement("delete from WiseSaying where id = ?;");
+            stmt.setInt(1, id);
             stmt.execute(getDeleteSql(id));
             stmt.close();
         }catch(SQLException e){
@@ -244,10 +212,13 @@ public class MySqlManager {
     }
 
     public void updateWiseSaying(int id, String content, String author){
-        Statement stmt;
+        PreparedStatement stmt;
         try{
-            stmt = conn.createStatement();
-            stmt.execute(getUpdateSql(id, content, author));
+            stmt = conn.prepareStatement("update WiseSaying set content = ?, author = ? where id = ?;");
+            stmt.setString(1, content);
+            stmt.setString(2, author);
+            stmt.setInt(3, id);
+            stmt.execute();
             stmt.close();
         } catch (SQLException e){
 

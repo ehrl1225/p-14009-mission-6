@@ -4,8 +4,8 @@ import com.back.step15.WiseSaying;
 
 public class WiseSayingRepository {
 //    WiseSayingDatabase database;
-    MySqlManager mysql;
-    FileManager fileManager;
+    private final MySqlManager mysql;
+    private final FileManager fileManager;
 
     public WiseSayingRepository() {
 //        database = new WiseSayingDatabase();

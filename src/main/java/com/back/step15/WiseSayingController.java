@@ -7,8 +7,8 @@ import com.back.step15.repository.WiseSayingView;
 import java.util.Scanner;
 
 public class WiseSayingController {
-    WiseSayingService service;
-    Scanner scanner;
+    private final WiseSayingService service;
+    private final Scanner scanner;
 
     WiseSayingController(Scanner sc) {
         service = new WiseSayingService();
